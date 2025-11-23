@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>开卦造型馆 — 设计命格测试（演示版）</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#f59e0b;--muted:#94a3b8;--glass:rgba(255,255,255,0.04)}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"PingFang SC","Hiragino Sans GB",sans-serif;background:linear-gradient(180deg,#031025 0%, #071428 60%);color:#e6eef8}
+    .wrap{max-width:920px;margin:36px auto;padding:28px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border-radius:14px;box-shadow:0 6px 30px rgba(2,6,23,0.7)}
+    header{display:flex;gap:20px;align-items:center}
+    .logo{width:64px;height:64px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#ffcd38);display:flex;align-items:center;justify-content:center;color:#081223;font-weight:700;font-size:18px}
+    h1{margin:0;font-size:22px}
+    p.lead{margin:6px 0 18px;color:var(--muted)}
+    main{margin-top:12px}
+    .card{background:var(--card);padding:18px;border-radius:12px;margin-bottom:16px}
+    .question{font-weight:600;margin-bottom:8px}
+    .choices{display:flex;flex-direction:column;gap:8px}
+    .choice{background:var(--glass);padding:10px;border-radius:8px;cursor:pointer;border:1px solid rgba(255,255,255,0.03)}
+    .choice:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.5)}
+    .progress{height:8px;background:rgba(255,255,255,0.03);border-radius:999px;overflow:hidden;margin-bottom:12px}
+    .progress > b{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#ffd27a);width:0%}
+    .btn-row{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+    .btn{background:var(--accent);color:#071223;padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:700}
+    .btn.secondary{background:transparent;color:var(--accent);border:1px solid rgba(255,255,255,0.04)}
+    .result-title{font-size:20px;margin:0 0 6px}
+    .result-sub{color:var(--muted);margin:0 0 12px}
+    .result-card{display:grid;grid-template-columns:1fr 240px;gap:12px}
+    .result-meta{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:12px;border-radius:10px}
+    .small{font-size:13px;color:var(--muted)}
+    footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
+    @media(max-width:720px){.result-card{grid-template-columns:1fr} .logo{width:52px;height:52px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">卦</div>
+      <div>
+        <h1>开卦造型馆 · 设计命格测试（演示）</h1>
+        <p class="lead">江湖玄学风 · 快速测试。此文件为单页静态版，可直接上传到你的主机作为 index.html。</p>
+      </div>
+    </header>
+
+    <main id="app">
+      <section id="intro" class="card">
+        <h2 style="margin-top:0">准备开卦？</h2>
+        <p class="small">本演示实现：题目展示 → 本地评分 → 决定 12 条命格之一 → 显示结果并可复制分享链接。</p>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button id="startBtn" class="btn">开始开卦</button>
+          <button id="previewBtn" class="btn secondary">查看示例命格</button>
+        </div>
+      </section>
+
+      <section id="quiz" class="card" style="display:none">
+        <div class="progress"><b id="progBar"></b></div>
+        <div id="questionArea"></div>
+        <div class="btn-row">
+          <button id="prevBtn" class="btn secondary">上一步</button>
+          <button id="nextBtn" class="btn">下一题</button>
+        </div>
+      </section>
+
+      <section id="result" class="card" style="display:none">
+        <div class="result-card">
+          <div>
+            <h3 class="result-title" id="resultName"></h3>
+            <p class="result-sub" id="resultOneLine"></p>
+            <div id="resultDesc" style="margin-bottom:12px"></div>
+            <div class="small">
+              <strong>建议方向：</strong> <span id="resultDirs"></span>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:8px">
+              <button id="restartBtn" class="btn">重测</button>
+              <button id="copyShare" class="btn secondary">复制分享链接</button>
+            </div>
+          </div>
+          <aside class="result-meta">
+            <div style="font-weight:700;margin-bottom:8px">命格速览</div>
+            <div id="resultMetaList" class="small"></div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="sampleList" class="card" style="display:none">
+        <h3 style="margin-top:0">示例：十二大命格（MVP）</h3>
+        <ul id="sampleUl" class="small"></ul>
+        <div style="margin-top:12px;text-align:right"><button id="backFromSample" class="btn secondary">返回</button></div>
+      </section>
+
+    </main>
+
+    <footer>把这个文件上传到你的服务器并命名为 <code>index.html</code> 即可。若想接域名，请把域名的 A/或 CNAME 指向你的主机。</footer>
+  </div>
+
+<script>
+// ------------------------------
+// 配置区：题目 & 命格（可直接编辑）
+// ------------------------------
+
+// MBTI 简化题 (8题)。每题的选项分别给出维度标记：E/I, N/S, T/F, P/J
+const mbtiQuestions = [
+  {q: '遇到陌生人时，你更可能：', a:['主动搭话|E','静静观察|I']},
+  {q: '做作业/项目时你更倾向：', a:['先上手试做|P','先列计划|J']},
+  {q: '听到一个新点子你首先想到：', a:['如何应用它|N','具体步骤怎么做|S']},
+  {q: '团队讨论出现分歧，你更注重：', a:['逻辑与事实|T','团队感受|F']},
+  {q: '空闲时间你更喜欢：', a:['社交与聚会|E','独处阅读|I']},
+  {q: '面对 deadline 你更：', a:['保持灵活调整|P','按计划推进|J']},
+  {q: '你更偏好：', a:['大方向和未来感|N','细节和现实可行性|S']},
+  {q: '做决定时你更看重：', a:['目标与结果|T','人的体验与和谐|F']}
+];
+
+// 设计特长题（示例 8 题），每个选项会给四象之一加分：a=审美, b=工程, c=系统, d=手作
+const skillQuestions = [
+  {q:'你更享受哪类活动？', a:['调形、玩曲面|a','分析结构力学|b','画流程图、设计系统|c','做手工模型|d']},
+  {q:'你做项目时更在意：', a:['形式美感|a','材料与强度|b','流程与服务体验|c','工艺与接缝|d']},
+  {q:'如果要挑课，你会选：', a:['色彩与造型|a','制造工艺|b','交互与服务设计|c','手作工作坊|d']},
+  {q:'你认为优秀的设计首先是：', a:['好看|a','能实现|b','好用|c','有手感|d']},
+  {q:'团队分工中你喜欢做：', a:['视觉表达|a','工程验证|b','用户研究|c','原型与打样|d']},
+  {q:'你的工具更倾向于：', a:['Photoshop/AI/Keyshot|a','CAD/Creo/Rhino|b','Miro/Figma/Flowcharts|c','手具/工具箱|d']},
+  {q:'你被同学夸奖最多：', a:['审美感强|a','做事细致|b','逻辑清晰|c','手工好|d']},
+  {q:'理想的作品集第一页是：', a:['一张强视觉作品|a','技术实现过程|b','用户使用场景|c','手工细节照|d']}
+];
+
+// 命格列表（12个）。id 用于生成分享链接
+const outcomes = [
+  {id:'造型观心派', name:'风象 · 造型观心派', one:'心随形动，以感性驾驭造型之气。', dirs:['产品造型','未来美学','概念设计'], meta:['ENFP/INFP','审美倾向']},
+  {id:'交互灵动派', name:'风象 · 交互灵动派', one:'善感人心，以体验为器，布置无形之界。', dirs:['UX/UI','服务设计'], meta:['ENFP/ENTP','体验倾向']},
+  {id:'视觉疾走派', name:'火象 · 视觉疾走派', one:'五色入心，视觉见性。', dirs:['视觉设计','动效','品牌'], meta:['ENFJ/ESFP','审美']},
+  {id:'创新破阵派', name:'火象 · 创新破阵派', one:'破旧立新，法随心变。', dirs:['概念设计','创新策略'], meta:['ENTJ/ENTP','创新']},
+  {id:'结构守恒派', name:'土象 · 结构守恒派', one:'稳中求胜，以结构定乾坤。', dirs:['结构设计','CMF'], meta:['ISTJ/ESTJ','工程']},
+  {id:'尺寸铁律派', name:'土象 · 尺寸铁律派', one:'万物有度，以毫米为刀。', dirs:['尺寸工程','设计验证'], meta:['ISTJ/ISFJ','严谨']},
+  {id:'系统织网派', name:'木象 · 系统织网派', one:'以逻辑结网，以结构立道。', dirs:['服务系统','设计策略'], meta:['INTJ/INTP','系统']},
+  {id:'工程炼器派', name:'木象 · 工程炼器派', one:'以科技炼器，以实践见真。', dirs:['参数化','机械交互'], meta:['ISTP/ESTP','工程']},
+  {id:'用户洞察派', name:'水象 · 用户洞察派', one:'看人心之动，解体验之源。', dirs:['用户研究','服务体验'], meta:['INFJ/ISFP','同理心']},
+  {id:'柔性匠心派', name:'水象 · 柔性匠心派', one:'以手驭物，以技成道。', dirs:['工坊','材料实验'], meta:['ISFP/ESFP','手作']},
+  {id:'战略判道派', name:'金象 · 战略判道派', one:'观局断势，以策略布道。', dirs:['咨询','内容策略'], meta:['INTJ/ENTJ','思维']},
+  {id:'数据寻迹派', name:'金象 · 数据寻迹派', one:'以数据寻真，以推理破局。', dirs:['数据研究','AI 产品'], meta:['ISTP/INTP','数据']}
+];
+
+// ------------------------------
+// 应用逻辑
+// ------------------------------
+let state = {step:0, answers:[], mbtiAns:[], skillAns:[]};
+const total = mbtiQuestions.length + skillQuestions.length;
+
+const startBtn = document.getElementById('startBtn');
+const previewBtn = document.getElementById('previewBtn');
+const quizSec = document.getElementById('quiz');
+const introSec = document.getElementById('intro');
+const resultSec = document.getElementById('result');
+const sampleSec = document.getElementById('sampleList');
+const questionArea = document.getElementById('questionArea');
+const progBar = document.getElementById('progBar');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const restartBtn = document.getElementById('restartBtn');
+const copyShare = document.getElementById('copyShare');
+
+startBtn.onclick = ()=>{introSec.style.display='none'; sampleSec.style.display='none'; quizSec.style.display='block'; state.step=0; renderQuestion(); updateProgress();}
+previewBtn.onclick = ()=>{introSec.style.display='none'; sampleSec.style.display='block'; renderSample();}
+
+prevBtn.onclick = ()=>{ if(state.step>0){state.step--; renderQuestion(); updateProgress();} }
+nextBtn.onclick = ()=>{ // move forward if answered
+  if(!state.answers[state.step]){ alert('请先选择一个选项'); return; }
+  if(state.step < total-1){ state.step++; renderQuestion(); updateProgress(); }
+  else { computeResult(); }
+}
+
+restartBtn.onclick = ()=>{state={step:0,answers:[],mbtiAns:[],skillAns:[]}; resultSec.style.display='none'; introSec.style.display='block';}
+
+copyShare.onclick = ()=>{ const id = resultIdForShare; const url = location.origin + location.pathname + '?result=' + encodeURIComponent(id); navigator.clipboard.writeText(url).then(()=>alert('分享链接已复制：\n'+url)) }
+
+// render sample list
+function renderSample(){ const ul = document.getElementById('sampleUl'); ul.innerHTML=''; outcomes.forEach(o=>{ const li = document.createElement('li'); li.textContent = o.name + ' — ' + o.one; ul.appendChild(li); }); }
+
+document.getElementById('backFromSample').onclick = ()=>{ sampleSec.style.display='none'; introSec.style.display='block'; }
+
+// question renderer
+function renderQuestion(){ questionArea.innerHTML=''; const idx = state.step;
+  // determine which pool
+  if(idx < mbtiQuestions.length){ const q = mbtiQuestions[idx]; showQ(idx+1,q.q,q.a); }
+  else { const sIdx = idx - mbtiQuestions.length; const q = skillQuestions[sIdx]; showQ(idx+1,q.q,q.a); }
+}
+
+function showQ(number, qtext, answers){ const qDiv = document.createElement('div'); qDiv.className='question'; qDiv.innerHTML = `<div class="question">Q${number}. ${escapeHtml(qtext)}</div>`; const choices = document.createElement('div'); choices.className='choices'; answers.forEach((t,i)=>{ const parts = t.split('|'); const txt = parts[0]; const tag = parts[1]||''; const btn = document.createElement('div'); btn.className='choice'; btn.innerText = txt; btn.onclick = ()=>{ state.answers[state.step] = {text:txt,tag:tag}; // store
+      // visual
+      Array.from(choices.children).forEach(ch=>ch.style.outline=''); btn.style.outline='2px solid rgba(255,255,255,0.08)';
+    }
+    // mark previously chosen
+    choices.appendChild(btn);
+  });
+  questionArea.appendChild(qDiv); questionArea.appendChild(choices);
+  // pre-select if answered
+  const prev = state.answers[state.step]; if(prev){ Array.from(choices.children).forEach(ch=>{ if(ch.innerText===prev.text) ch.style.outline='2px solid rgba(255,255,255,0.08)'; }) }
+}
+
+function updateProgress(){ const pct = Math.round((state.step)/ (total-1) * 100); progBar.style.width = pct + '%'; }
+
+// scoring logic
+let resultIdForShare = '';
+function computeResult(){ // parse MBTI
+  const mbtiScore = {E:0,I:0,N:0,S:0,T:0,F:0,P:0,J:0};
+  for(let i=0;i<mbtiQuestions.length;i++){ const ans = state.answers[i]; if(!ans) continue; const tag = ans.tag; if(tag){ mbtiScore[tag] = (mbtiScore[tag]||0)+1; } }
+  // simplify to two-letter groups
+  const EI = mbtiScore.E >= mbtiScore.I ? 'E':'I';
+  const NS = mbtiScore.N >= mbtiScore.S ? 'N':'S';
+  const TF = mbtiScore.T >= mbtiScore.F ? 'T':'F';
+  const PJ = mbtiScore.P >= mbtiScore.J ? 'P':'J';
+  const mbtiCombo = EI + NS + TF + PJ;
+
+  // skill scoring
+  const skill = {a:0,b:0,c:0,d:0};
+  for(let i=0;i<skillQuestions.length;i++){ const ans = state.answers[mbtiQuestions.length + i]; if(!ans) continue; const tag = ans.tag; if(tag){ skill[tag] = (skill[tag]||0)+1; } }
+  // find top skill
+  const sortedSkills = Object.entries(skill).sort((a,b)=>b[1]-a[1]); const topSkill = sortedSkills[0][0];
+
+  // decide outcome: a simple mapping between topSkill + mbti main axis
+  // We'll map by topSkill index to one of 12 outcomes
+  const mappingIndex = {a:0,b:4,c:6,d:8}; // a -> 0..3, b ->4..5 etc. We'll select by another tiebreak
+  let pickBase = mappingIndex[topSkill] || 0;
+  // tiebreak: use EI and N/S
+  if(mbtiScore.N > mbtiScore.S) pickBase += 0; else pickBase += 1;
+  // ensure within array
+  pickBase = pickBase % outcomes.length;
+  const out = outcomes[pickBase];
+
+  // show result
+  showResult(out, mbtiCombo, skill);
+}
+
+function showResult(outcome, mbtiCombo, skillScores){ resultSec.style.display='block'; quizSec.style.display='none'; introSec.style.display='none'; sampleSec.style.display='none';
+  document.getElementById('resultName').innerText = outcome.name;
+  document.getElementById('resultOneLine').innerText = outcome.one;
+  document.getElementById('resultDesc').innerHTML = `<p class="small">你的 MBTI 倾向（简化）：<strong>${escapeHtml(mbtiCombo)}</strong></p><p class="small">技能分布：审美 ${skillScores.a} / 工程 ${skillScores.b} / 系统 ${skillScores.c} / 手作 ${skillScores.d}</p>`;
+  document.getElementById('resultDirs').innerText = outcome.dirs.join(' · ');
+  document.getElementById('resultMetaList').innerHTML = outcome.meta.join('<br>');
+  resultIdForShare = outcome.id;
+}
+
+// helper
+function escapeHtml(s){ return s.replace(/[&<>"']/g, function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[m]}); }
+
+// share: check URL param
+(function(){ const params = new URLSearchParams(location.search); const r = params.get('result'); if(r){ // show result directly if matches
+    const found = outcomes.find(o=>o.id===r); if(found){ showResult(found); } }
+})();
+
+</script>
+</body>
+</html>
