@@ -231,7 +231,7 @@ function computeResult(){ // parse MBTI
 function showResult(outcome, mbtiCombo, skillScores){ resultSec.style.display='block'; quizSec.style.display='none'; introSec.style.display='none'; sampleSec.style.display='none';
   document.getElementById('resultName').innerText = outcome.name;
   document.getElementById('resultOneLine').innerText = outcome.one;
-  document.getElementById('resultDesc').innerHTML = `<p class="small">你的 MBTI 倾向（简化）：<strong>${escapeHtml(mbtiCombo)}</strong></p><p class="small">技能分布：审美 ${skillScores.a} / 工程 ${skillScores.b} / 系统 ${skillScores.c} / 手作 ${skillScores.d}</p>`;
+  document.getElementById('resultDesc').innerHTML = `<p class="small">你的工设MBTI 倾向（简化）：<strong>${escapeHtml(mbtiCombo)}</strong></p><p class="small">技能分布：审美 ${skillScores.a} / 工程 ${skillScores.b} / 系统 ${skillScores.c} / 手作 ${skillScores.d}</p>`;
   document.getElementById('resultDirs').innerText = outcome.dirs.join(' · ');
   document.getElementById('resultMetaList').innerHTML = outcome.meta.join('<br>');
   resultIdForShare = outcome.id;
