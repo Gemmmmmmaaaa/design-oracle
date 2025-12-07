@@ -1,250 +1,673 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>开卦造型馆 — 设计命格测试（演示版）</title>
-  <style>
-    :root{--bg:#0f1724;--card:#cec2eb;--accent:#f59e0b;--muted:#94a3b8;--glass:rgba(255,255,255,0.04)}
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"PingFang SC","Hiragino Sans GB",sans-serif;background:linear-gradient(180deg,#031025 0%, #071428 60%);color:#e6eef8}
-    .wrap{max-width:920px;margin:36px auto;padding:28px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border-radius:14px;box-shadow:0 6px 30px rgba(2,6,23,0.7)}
-    header{display:flex;gap:20px;align-items:center}
-    .logo{width:64px;height:64px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#a55b60);display:flex;align-items:center;justify-content:center;color:#081223;font-weight:700;font-size:18px}
-    h1{margin:0;font-size:22px}
-    p.lead{margin:6px 0 18px;color:var(--muted)}
-    main{margin-top:12px}
-    .card{background:var(--card);padding:18px;border-radius:12px;margin-bottom:16px}
-    .question{font-weight:600;margin-bottom:8px}
-    .choices{display:flex;flex-direction:column;gap:8px}
-    .choice{background:var(--glass);padding:10px;border-radius:8px;cursor:pointer;border:1px solid rgba(255,255,255,0.03)}
-    .choice:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.5)}
-    .progress{height:8px;background:rgba(255,255,255,0.03);border-radius:999px;overflow:hidden;margin-bottom:12px}
-    .progress > b{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#ffd27a);width:0%}
-    .btn-row{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
-    .btn{background:var(--accent);color:#071223;padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:700}
-    .btn.secondary{background:transparent;color:var(--accent);border:1px solid rgba(255,255,255,0.04)}
-    .result-title{font-size:20px;margin:0 0 6px}
-    .result-sub{color:var(--muted);margin:0 0 12px}
-    .result-card{display:grid;grid-template-columns:1fr 240px;gap:12px}
-    .result-meta{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:12px;border-radius:10px}
-    .small{font-size:13px;color:var(--muted)}
-    footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
-    @media(max-width:720px){.result-card{grid-template-columns:1fr} .logo{width:52px;height:52px}}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ID Student Survival Test | 工业设计系生存大摸底</title>
+    <style>
+        :root {
+            --primary: #FF5E00; /* 活力橙，代表工业设计的创造力 */
+            --secondary: #1D1D1F;
+            --bg: #F2F2F7;
+            --card: #FFFFFF;
+            --gray: #86868B;
+            --star-active: #FFD60A;
+            --radius: 24px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--secondary);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 680px;
+            margin: 40px 20px;
+            position: relative;
+        }
+
+        /* 标题区 */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h1 { font-size: 26px; margin-bottom: 8px; font-weight: 800; }
+        .subtitle { color: var(--gray); font-size: 14px; }
+
+        /* 进度条 */
+        .progress-track {
+            background: #E5E5EA;
+            height: 6px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: var(--primary);
+            height: 100%;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* 卡片容器 */
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+            transition: all 0.3s ease;
+        }
+
+        .section-tag {
+            display: inline-block;
+            background: #FFF0E6;
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 100px;
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 19px;
+            font-weight: 700;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        /* 选项按钮 (单选) */
+        .btn-option {
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: #F5F5F7;
+            border: 2px solid transparent;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            border-radius: 16px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--secondary);
+        }
+        .btn-option:hover { background: #EBEBF0; }
+        .btn-option.selected {
+            border-color: var(--primary);
+            background: #FFF0E6;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* 星级打分 */
+        .star-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 30px 0;
+        }
+        .star-btn {
+            font-size: 32px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            color: #E5E5EA;
+        }
+        .star-btn:hover { transform: scale(1.2); }
+        .star-btn.active { color: var(--star-active); }
+        .star-desc {
+            text-align: center;
+            font-size: 14px;
+            color: var(--gray);
+            height: 20px;
+        }
+
+        /* 排序题样式 */
+        .sort-area {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .sort-item {
+            background: #fff;
+            border: 1px solid #E5E5EA;
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        .sort-item:hover { border-color: var(--primary); }
+        .sort-item.picked {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .rank-badge {
+            background: rgba(255,255,255,0.3);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 12px;
+            font-weight: bold;
+            display: none;
+        }
+        .picked .rank-badge { display: block; }
+        .sort-reset {
+            text-align: center;
+            margin-top: 15px;
+            color: var(--gray);
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* Yes/No 按钮 */
+        .yn-container {
+            display: flex;
+            gap: 15px;
+        }
+        .yn-btn {
+            flex: 1;
+            padding: 20px;
+            border-radius: 16px;
+            border: 2px solid #E5E5EA;
+            background: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .yn-btn.yes:hover, .yn-btn.yes.selected { border-color: #34C759; color: #34C759; background: #E8F5E9; }
+        .yn-btn.no:hover, .yn-btn.no.selected { border-color: #FF3B30; color: #FF3B30; background: #FFEBEE; }
+
+        /* 底部导航 */
+        .nav-actions {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .next-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            border-radius: 100px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .next-btn:hover { transform: scale(1.05); }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* 结果页 */
+        .result-box { display: none; animation: fadeIn 0.8s; }
+        .result-header { text-align: center; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px;}
+        .result-title { font-size: 28px; font-weight: 800; color: var(--primary); margin: 10px 0; }
+        
+        .advice-card {
+            background: #F9F9FB;
+            border-left: 4px solid var(--primary);
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+        .advice-title { font-weight: 700; margin-bottom: 5px; display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Start Screen */
+        .intro-screen { text-align: center; padding: 40px; }
+        .intro-emoji { font-size: 60px; margin-bottom: 20px; }
+    </style>
 </head>
 <body>
-  <div class="wrap">
+
+<div class="container">
     <header>
-      <div class="logo">卦</div>
-      <div>
-        <h1>开卦造型馆 · 设计命格测试（演示）</h1>
-        <p class="lead">江湖玄学风 · 快速测试。此文件为单页静态版=</p>
-      </div>
+        <h1>🎓 ID Survival Test</h1>
+        <div class="subtitle">设计系生存大摸底 · Pro版</div>
     </header>
 
-    <main id="app">
-      <section id="intro" class="card">
-        <h2 style="margin-top:0">准备开卦？</h2>
-        <p class="small">本演示实现：题目展示 → 本地评分 → 决定 12 条命格之一 → 显示结果并可复制分享链接。</p>
-        <div style="display:flex;gap:8px;margin-top:12px">
-          <button id="startBtn" class="btn">开始开卦</button>
-          <button id="previewBtn" class="btn secondary">查看示例命格</button>
+    <!-- 1. Intro Screen -->
+    <div id="intro" class="card intro-screen">
+        <div class="intro-emoji">🛠️</div>
+        <h2 style="margin-top:0;">同学，你的肝还好吗？</h2>
+        <p style="color: #666; line-height: 1.6;">
+            这不是考试，这是一次灵魂拷问。<br>
+            测测你到底是该去大厂卷落地，<br>
+            还是该出国搞艺术，<br>
+            或者是趁早转行卖炒粉。
+        </p>
+        <button class="next-btn" style="margin-top: 20px;" onclick="startQuiz()">开始摸底</button>
+    </div>
+
+    <!-- 2. Quiz Interface -->
+    <div id="quiz-ui" style="display: none;">
+        <div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+        <div id="card-container"></div>
+        <div class="nav-actions">
+            <button class="next-btn" id="next-btn" onclick="nextQuestion()" disabled>下一题</button>
         </div>
-      </section>
+    </div>
 
-      <section id="quiz" class="card" style="display:none">
-        <div class="progress"><b id="progBar"></b></div>
-        <div id="questionArea"></div>
-        <div class="btn-row">
-          <button id="prevBtn" class="btn secondary">上一步</button>
-          <button id="nextBtn" class="btn">下一题</button>
-        </div>
-      </section>
-
-      <section id="result" class="card" style="display:none">
-        <div class="result-card">
-          <div>
-            <h3 class="result-title" id="resultName"></h3>
-            <p class="result-sub" id="resultOneLine"></p>
-            <div id="resultDesc" style="margin-bottom:12px"></div>
-            <div class="small">
-              <strong>建议方向：</strong> <span id="resultDirs"></span>
-            </div>
-            <div style="margin-top:12px;display:flex;gap:8px">
-              <button id="restartBtn" class="btn">重测</button>
-              <button id="copyShare" class="btn secondary">复制分享链接</button>
-            </div>
-          </div>
-          <aside class="result-meta">
-            <div style="font-weight:700;margin-bottom:8px">命格速览</div>
-            <div id="resultMetaList" class="small"></div>
-          </aside>
-        </div>
-      </section>
-
-      <section id="sampleList" class="card" style="display:none">
-        <h3 style="margin-top:0">示例：十二大命格（MVP）</h3>
-        <ul id="sampleUl" class="small"></ul>
-        <div style="margin-top:12px;text-align:right"><button id="backFromSample" class="btn secondary">返回</button></div>
-      </section>
-
-    </main>
-
-  </div>
+    <!-- 3. Result Interface -->
+    <div id="result-ui" class="result-box card">
+        <!-- Results injected by JS -->
+    </div>
+</div>
 
 <script>
-// ------------------------------
-// 配置区：题目 & 命格（可直接编辑）
-// ------------------------------
+    // --- 题库数据 ---
+    const questions = [
+        // Part 1: Brain (Choice)
+        {
+            section: "🧠 Part 1: 大脑构造",
+            type: "choice",
+            text: "Q1. 当老师布置了一个新题目（比如设计一个“未来的杯子”），你第一反应是：",
+            options: [
+                { text: "A. 脑洞派：“杯子为什么一定要喝水？用来吸空气行不行？”", scores: { art: 2, global: 2 } },
+                { text: "B. 实用派：“现在的杯子太烫手，我要解决隔热问题。”", scores: { logic: 2, local: 2 } }
+            ]
+        },
+        {
+            section: "🧠 Part 1: 大脑构造",
+            type: "choice",
+            text: "Q2. 关于“参考图” (Pinterest/Behance)，你的收藏夹通常是：",
+            options: [
+                { text: "A. 颜值党：全是炫酷渲染、赛博朋克，帅就完了。", scores: { art: 2, render: 1 } },
+                { text: "B. 结构党：爆炸图、拆解图、精巧的小机构。", scores: { logic: 2, structure: 2 } }
+            ]
+        },
+        {
+            section: "🧠 Part 1: 大脑构造",
+            type: "choice",
+            text: "Q3. 如果让你做一整天“重复性工作”，哪个让你稍微没那么想死？",
+            options: [
+                { text: "A. 排版修图：P图、调字体间距，把版面弄好看。", scores: { art: 1, layout: 2 } },
+                { text: "B. 调整模型：在软件里拉点、调倒角、修参数。", scores: { logic: 1, structure: 2 } }
+            ]
+        },
 
-// MBTI 简化题 (8题)。每题的选项分别给出维度标记：E/I, N/S, T/F, P/J
-const mbtiQuestions = [
-  {q: '遇到想认识的陌生人时，你更可能：', a:['主动搭话|E','静静观察|I']},
-  {q: '做作业/项目时你更倾向：', a:['先上手试做|P','先列计划|J']},
-  {q: '听到一个新点子你首先想到：', a:['如何应用它|N','具体步骤怎么做|S']},
-  {q: '当设计需要取舍，你更注重：', a:['稳定的运行|T','用户感受|F']},
-  {q: '空闲时间你更喜欢：', a:['社交与聚会|E','独处阅读|I']},
-  {q: '面对 deadline 你更：', a:['保持灵活调整|P','按计划推进|J']},
-  {q: '你更偏好：', a:['大方向和未来感|N','细节和现实可行性|S']},
-  {q: '做决定时你更看重：', a:['目标与结果|T','人的体验与和谐|F']}
-];
+        // Part 2: Skills (Stars 1-5)
+        {
+            section: "✍️ Part 2: 技能树 (1-5星)",
+            type: "stars",
+            text: "Q4. 【手绘草图】线条自信吗？透视准吗？<br><span style='font-size:14px;color:#999'>(1星=小学生涂鸦 / 5星=大神级别)</span>",
+            key: "sketch"
+        },
+        {
+            section: "✍️ Part 2: 技能树 (1-5星)",
+            type: "stars",
+            text: "Q5. 【3D 建模】遇到怪异形状能建出来吗？<br><span style='font-size:14px;color:#999'>(1星=只会拉方块 / 5星=曲面随心所欲)</span>",
+            key: "modeling"
+        },
+        {
+            section: "✍️ Part 2: 技能树 (1-5星)",
+            type: "stars",
+            text: "Q6. 【渲染出图】看起来真实高级吗？<br><span style='font-size:14px;color:#999'>(1星=塑料玩具 / 5星=官网大片)</span>",
+            key: "rendering"
+        },
+        {
+            section: "✍️ Part 2: 技能树 (1-5星)",
+            type: "stars",
+            text: "Q7. 【动手制作】去模型房磨泡沫、喷漆、粘胶水。<br><span style='font-size:14px;color:#999'>(1星=吸毒气救命 / 5星=就是喜欢动手)</span>",
+            key: "prototype"
+        },
 
-// 设计特长题（示例 8 题），每个选项会给四象之一加分：a=审美, b=工程, c=系统, d=手作
-const skillQuestions = [
-  {q:'你更享受哪类活动？', a:['做造型与sketching|a','分析生产可行性|b','分析用户活动、做流程图|c','做手工模型|d']},
-  {q:'你做项目时更在意：', a:['形式美感|a','材料与强度|b','流程与服务体验|c','细节的处理与精细的工艺|d']},
-  {q:'如果要挑课，你会选：', a:['色彩与造型|a','制造工艺|b','交互与服务设计|c','手作工作坊|d']},
-  {q:'你认为优秀的设计首先是：', a:['好看|a','能实现|b','好用|c','有手感|d']},
-  {q:'团队分工中你喜欢做：', a:['视觉表达|a','工程验证|b','用户研究|c','原型与打样|d']},
-  {q:'你的工具更倾向于：', a:['Photoshop/AI/Keyshot|a','CAD/Creo/Rhino|b','Miro/Figma/Flowcharts|c','手具/工具箱|d']},
-  {q:'你被同学夸奖最多：', a:['审美感强|a','做事细致|b','逻辑清晰|c','手工好|d']},
-  {q:'理想的作品集中你愿意为什么花费最多的时间：', a:['一张强视觉作品|a','技术实现过程|b','用户使用场景|c','手工细节照|d']}
-];
+        // Part 3: Scenario (Choice)
+        {
+            section: "🏫 Part 3: 工作室情境",
+            type: "choice",
+            text: "Q8. 【关于小组作业】你是以下哪种人？",
+            options: [
+                { text: "A. 暴躁组长：“明天必交图！不交踢人！”", scores: { leader: 2, local: 1 } },
+                { text: "B. 建模/渲染大腿：“别吵了，图发我，我通宵搞定。”", scores: { tech: 2, local: 1 } },
+                { text: "C. 划水艺术家/演讲担当：“我负责讲PPT忽悠老师。”", scores: { soft: 2, global: 1 } }
+            ]
+        },
+        {
+            section: "🏫 Part 3: 工作室情境",
+            type: "choice",
+            text: "Q9. 老师说：“我觉得这个造型太丑了，重做。” 你的内心独白：",
+            options: [
+                { text: "A. 不服：“是你老土不懂欣赏！”（坚持自我）", scores: { art: 2, global: 2 } },
+                { text: "B. 找逻辑：“这是配合功能的，不是为了好看。”", scores: { logic: 2 } },
+                { text: "C. 只要过就好：“好的老师，您给个参考图我照改。”", scores: { local: 2 } }
+            ]
+        },
+        {
+            section: "🏫 Part 3: 工作室情境",
+            type: "choice",
+            text: "Q10. 软件崩了没保存。你的反应：",
+            options: [
+                { text: "A. 思考人生：呆坐5分钟，想去卖烤冷面。", scores: { burnout: 1 } },
+                { text: "B. 肌肉记忆：骂一句，重启重画，画得更好。", scores: { tech: 2, resilience: 2 } }
+            ]
+        },
 
-// 命格列表（12个）。id 用于生成分享链接
-const outcomes = [
-  {id:'造型观心派', name:'风象 · 造型观心派', one:'心随形动，以感性驾驭造型之气。你对于造型审美有着自己的坚持与想法，喜欢用视觉美学来体现想法，你可能不太在乎落地性，但是有时候也会执着于无比精致的细节，用造型引起共鸣，你的设计总会让人印象深刻，甚至成为潮流。', dirs:['产品造型','未来美学','概念设计'], meta:['ENFP/INFP','审美倾向']},
-  {id:'交互灵动派', name:'风象 · 交互灵动派', one:'善感人心，以体验为器，布置无形之界。你可能比用户更了解他自己，你对情绪与感觉非常的敏感，你能敏锐的捕捉到看似不起眼的用户需求，你的设计不会太招摇，不引人注目却总能直击人心，好像一切本应该就是你设计的这样，在无形中改变世界。', dirs:['UX/UI','服务设计'], meta:['ENFP/ENTP','体验倾向']},
-  {id:'视觉疾走派', name:'火象 · 视觉疾走派', one:'五色入心，视觉见性。你对视觉有着很高的敏感度，总能用爆炸的视觉效果一秒捕捉视线与注意力，你可以用视觉来表达思想、情感甚至真理，你的作品适合用眼睛去看，用心去思考，只是一眼就能窥探到背后的故事，激起灵魂的共鸣', dirs:['视觉传达','动效','品牌'], meta:['ENFJ/ESFP','审美']},
-  {id:'创新破阵派', name:'火象 · 创新破阵派', one:'破旧立新，法随心变。你从来不拘泥于传统，开宗立派你总能做的很好，全新的概念领域可能才是你的舒适域，你的超强直觉会引领你走向一片广阔的无人区，在这里发挥你的直觉，疯狂的提出超前的设计概念，像设计界的普罗米修斯一样，不断的为世界带来新的设计火种。', dirs:['概念设计','创新策略'], meta:['ENTJ/ENTP','创新']},
-  {id:'结构守恒派', name:'土象 · 结构守恒派', one:'稳中求胜，以结构定乾坤。你擅长工程技术，一切在你眼里都是需要运行的机器，你的设计依托于技术与知识，你可以将你所学到的工程知识应用于各种设计中，作为设计落地的真正实施者，你既有审美也有技术，你是设计中最不可或缺的一类人', dirs:['结构设计','CMF'], meta:['ISTJ/ESTJ','工程']},
-  {id:'尺寸铁律派', name:'土象 · 尺寸铁律派', one:'万物有度，以毫米为刀。你异常的严谨，对于自己手下的产物可以说是一丝不苟，你非常适合去做设计验证，你细致的性格总能抽丝剥茧一般找到各种隐伤，再繁琐的事情在你这里也会变得一丝不苟、井井有条，你是所有伟大设计的最后一关，临门的关键一脚。', dirs:['尺寸工程','设计验证'], meta:['ISTJ/ISFJ','严谨']},
-  {id:'系统织网派', name:'木象 · 系统织网派', one:'以逻辑结网，以结构立道。你有着严密的逻辑与统筹能力，可以清晰地整理到项目牵扯的所有相关者，并一起统筹安排，你的视野总是最全面的，对于未来也有对应的预估与方案，你更像一个策略家，运筹帷幄之中完成整个流程的设计，一个设计从上游开发到下游售后，都靠你的前瞻与推进。', dirs:['服务系统','设计策略'], meta:['INTJ/INTP','系统']},
-  {id:'工程炼器派', name:'木象 · 工程炼器派', one:'以科技炼器，以实践见真。你像炼金术士一般，你总能掌握一些特殊的工具与技巧，用这些来完成非常复杂的工作，你的能力就像四两拨千斤，运用科技和技术来营造恢弘或深刻的设计作品，你很像科技发烧友，也像只修一本经的隐士，你可以把工具学到出神入化、技人合一，是设计界中不可或缺的能人异士', dirs:['参数化','机械交互'], meta:['ISTP/ESTP','工程']},
-  {id:'用户洞察派', name:'水象 · 用户洞察派', one:'看人心之动，解体验之源。你的同理心与理性并存，你能敏锐的捕捉到不同寻常，但是又可以理性分析整理，你会比用户更了解他们自己，你也有足够的逻辑力帮用户去解决问题，洞察是你的特长所在，敏锐的嗅觉总能让你找到问题关键，像神医一般直击病灶并条理解决', dirs:['用户研究','服务体验'], meta:['INFJ/ISFP','同理心']},
-  {id:'柔性匠心派', name:'水象 · 柔性匠心派', one:'以手驭物，以技成道。你会更习惯于用手去探索创造，亲眼见证不同的工艺与产品在你的手下诞生，你会痴迷于切实的触感与造物的满足中，同时你的造物又充满着柔情与关怀，你的设计产品就是你与用户交流的桥梁，当用户触碰你的作品的那一刻，就能读懂你的用心与思绪。', dirs:['工坊','材料实验'], meta:['ISFP/ESFP','手作']},
-  {id:'战略判道派', name:'金象 · 战略判道派', one:'观局断势，以策略布道。你的观察能力非常强，同时对于计划安排又极致的清晰，你总能最快的理解学会新的知识，同时几乎下意识的就会分析出相关的战略与应用，你对于如何实现、如何一步步靠近最终目标有着清晰规划，别人也很容易从你这里得到切实可行的建议。', dirs:['咨询','内容策略'], meta:['INTJ/ENTJ','思维']},
-  {id:'数据寻迹派', name:'金象 · 数据寻迹派', one:'以数据寻真，以推理破局。你对于数据有着异常的敏锐度，你不会被感性与直觉去主导，每一步都有具体的参考与理论，你的所有设计与理论是经得起反复推敲思考的，你非常适合于学术研究，严谨客观的性格使你注定会去探索记录，并且每一步都会详细记录，你的设计过程与思考过程十分适合作为参考文献，你的严谨态度正是学术所最需要的。', dirs:['数据研究','AI 产品'], meta:['ISTP/INTP','数据']}
-];
+        // Part 4: Values (Sorting)
+        {
+            section: "⚖️ Part 4: 价值观排序",
+            type: "sort",
+            text: "Q11. 毕业了，这几个Offer你最想要哪个？<br><span style='font-size:14px;color:#999'>(请按顺序点击，最想要的排第一)</span>",
+            items: [
+                { id: "A", text: "💰 钱多事少 (做土味设计也行)", type: "money" },
+                { id: "B", text: "🏢 大厂光环 (卷死也认了)", type: "fame" },
+                { id: "C", text: "🎨 审美自由 (钱少但做艺术)", type: "art" },
+                { id: "D", text: "🌍 改变世界 (做公益/环保)", type: "impact" }
+            ]
+        },
 
-// ------------------------------
-// 应用逻辑
-// ------------------------------
-let state = {step:0, answers:[], mbtiAns:[], skillAns:[]};
-const total = mbtiQuestions.length + skillQuestions.length;
+        // Part 5: New Tech (Y/N)
+        {
+            section: "🤖 Part 5: 新时代加分",
+            type: "yn",
+            text: "Q12. 你平时会用 AI (ChatGPT, Midjourney) 帮你写作业或找灵感吗？",
+            scores: { ai: 1 }
+        },
+        {
+            section: "🤖 Part 5: 新时代加分",
+            type: "yn",
+            text: "Q13. 相比实体音箱，你是否对设计音箱APP里的“交互逻辑”更感兴趣？",
+            scores: { ux: 2 }
+        },
 
-const startBtn = document.getElementById('startBtn');
-const previewBtn = document.getElementById('previewBtn');
-const quizSec = document.getElementById('quiz');
-const introSec = document.getElementById('intro');
-const resultSec = document.getElementById('result');
-const sampleSec = document.getElementById('sampleList');
-const questionArea = document.getElementById('questionArea');
-const progBar = document.getElementById('progBar');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
-const restartBtn = document.getElementById('restartBtn');
-const copyShare = document.getElementById('copyShare');
+        // Part 6: Study Abroad (Special Module)
+        {
+            section: "✈️ Part 6: 留学 vs 搬砖 (新增)",
+            type: "choice",
+            text: "Q14. 你的作品集里，你更想放什么？",
+            options: [
+                { text: "A. 5张像苹果官网一样的完美渲染图。", scores: { local: 2, render: 1 } },
+                { text: "B. 50个失败的草模照片和一墙的便利贴。", scores: { global: 3, process: 2 } }
+            ]
+        },
+        {
+            section: "✈️ Part 6: 留学 vs 搬砖 (新增)",
+            type: "choice",
+            text: "Q15. 你觉得设计的终极奥义是？",
+            options: [
+                { text: "A. 解决问题：好用、便宜、能量产。", scores: { local: 3, logic: 1 } },
+                { text: "B. 提出问题：引发思考，哪怕现在造不出来。", scores: { global: 3, art: 1 } }
+            ]
+        },
+        {
+            section: "✈️ Part 6: 留学 vs 搬砖 (新增)",
+            type: "choice",
+            text: "Q16. 如果你有时停的特异功能，这时要你用英语做一个全班演讲 Presentation...",
+            options: [
+                { text: "A. 杀了我吧，我只负责画图。", scores: { local: 1 } },
+                { text: "B. 有点兴奋，我要用时停考个专八，讲个故事感动大家。", scores: { global: 2, soft: 1 } }
+            ]
+        }
+    ];
 
-startBtn.onclick = ()=>{introSec.style.display='none'; sampleSec.style.display='none'; quizSec.style.display='block'; state.step=0; renderQuestion(); updateProgress();}
-previewBtn.onclick = ()=>{introSec.style.display='none'; sampleSec.style.display='block'; renderSample();}
+    // --- 逻辑处理 ---
+    let currentIdx = 0;
+    let userScores = {
+        art: 0, logic: 0, 
+        global: 0, local: 0,
+        sketch: 0, modeling: 0, rendering: 0, prototype: 0,
+        ux: 0
+    };
+    
+    // 临时存储排序题答案
+    let tempSortOrder = [];
 
-prevBtn.onclick = ()=>{ if(state.step>0){state.step--; renderQuestion(); updateProgress();} }
-nextBtn.onclick = ()=>{ // move forward if answered
-  if(!state.answers[state.step]){ alert('请先选择一个选项'); return; }
-  if(state.step < total-1){ state.step++; renderQuestion(); updateProgress(); }
-  else { computeResult(); }
-}
-
-restartBtn.onclick = ()=>{state={step:0,answers:[],mbtiAns:[],skillAns:[]}; resultSec.style.display='none'; introSec.style.display='block';}
-
-copyShare.onclick = ()=>{ const id = resultIdForShare; const url = location.origin + location.pathname + '?result=' + encodeURIComponent(id); navigator.clipboard.writeText(url).then(()=>alert('分享链接已复制：\n'+url)) }
-
-// render sample list
-function renderSample(){ const ul = document.getElementById('sampleUl'); ul.innerHTML=''; outcomes.forEach(o=>{ const li = document.createElement('li'); li.textContent = o.name + ' — ' + o.one; ul.appendChild(li); }); }
-
-document.getElementById('backFromSample').onclick = ()=>{ sampleSec.style.display='none'; introSec.style.display='block'; }
-
-// question renderer
-function renderQuestion(){ questionArea.innerHTML=''; const idx = state.step;
-  // determine which pool
-  if(idx < mbtiQuestions.length){ const q = mbtiQuestions[idx]; showQ(idx+1,q.q,q.a); }
-  else { const sIdx = idx - mbtiQuestions.length; const q = skillQuestions[sIdx]; showQ(idx+1,q.q,q.a); }
-}
-
-function showQ(number, qtext, answers){ const qDiv = document.createElement('div'); qDiv.className='question'; qDiv.innerHTML = `<div class="question">Q${number}. ${escapeHtml(qtext)}</div>`; const choices = document.createElement('div'); choices.className='choices'; answers.forEach((t,i)=>{ const parts = t.split('|'); const txt = parts[0]; const tag = parts[1]||''; const btn = document.createElement('div'); btn.className='choice'; btn.innerText = txt; btn.onclick = ()=>{ state.answers[state.step] = {text:txt,tag:tag}; // store
-      // visual
-      Array.from(choices.children).forEach(ch=>ch.style.outline=''); btn.style.outline='2px solid rgba(255,255,255,0.08)';
+    function startQuiz() {
+        document.getElementById('intro').style.display = 'none';
+        document.getElementById('quiz-ui').style.display = 'block';
+        renderQuestion();
     }
-    // mark previously chosen
-    choices.appendChild(btn);
-  });
-  questionArea.appendChild(qDiv); questionArea.appendChild(choices);
-  // pre-select if answered
-  const prev = state.answers[state.step]; if(prev){ Array.from(choices.children).forEach(ch=>{ if(ch.innerText===prev.text) ch.style.outline='2px solid rgba(255,255,255,0.08)'; }) }
-}
 
-function updateProgress(){ const pct = Math.round((state.step)/ (total-1) * 100); progBar.style.width = pct + '%'; }
+    function renderQuestion() {
+        const q = questions[currentIdx];
+        const container = document.getElementById('card-container');
+        const nextBtn = document.getElementById('next-btn');
+        
+        // Update Progress
+        const pct = ((currentIdx) / questions.length) * 100;
+        document.getElementById('progress').style.width = pct + "%";
 
-// scoring logic
-let resultIdForShare = '';
-function computeResult(){ // parse MBTI
-  const mbtiScore = {E:0,I:0,N:0,S:0,T:0,F:0,P:0,J:0};
-  for(let i=0;i<mbtiQuestions.length;i++){ const ans = state.answers[i]; if(!ans) continue; const tag = ans.tag; if(tag){ mbtiScore[tag] = (mbtiScore[tag]||0)+1; } }
-  // simplify to two-letter groups
-  const EI = mbtiScore.E >= mbtiScore.I ? 'E':'I';
-  const NS = mbtiScore.N >= mbtiScore.S ? 'N':'S';
-  const TF = mbtiScore.T >= mbtiScore.F ? 'T':'F';
-  const PJ = mbtiScore.P >= mbtiScore.J ? 'P':'J';
-  const mbtiCombo = EI + NS + TF + PJ;
+        nextBtn.disabled = true; // disable until selected
 
-  // skill scoring
-  const skill = {a:0,b:0,c:0,d:0};
-  for(let i=0;i<skillQuestions.length;i++){ const ans = state.answers[mbtiQuestions.length + i]; if(!ans) continue; const tag = ans.tag; if(tag){ skill[tag] = (skill[tag]||0)+1; } }
-  // find top skill
-  const sortedSkills = Object.entries(skill).sort((a,b)=>b[1]-a[1]); const topSkill = sortedSkills[0][0];
+        let html = `
+            <div class="card">
+                <div class="section-tag">${q.section}</div>
+                <div class="question-text">${q.text}</div>
+        `;
 
-  // decide outcome: a simple mapping between topSkill + mbti main axis
-  // We'll map by topSkill index to one of 12 outcomes
-  const mappingIndex = {a:0,b:4,c:6,d:8}; // a -> 0..3, b ->4..5 etc. We'll select by another tiebreak
-  let pickBase = mappingIndex[topSkill] || 0;
-  // tiebreak: use EI and N/S
-  if(mbtiScore.N > mbtiScore.S) pickBase += 0; else pickBase += 1;
-  // ensure within array
-  pickBase = pickBase % outcomes.length;
-  const out = outcomes[pickBase];
+        // Render based on type
+        if (q.type === 'choice') {
+            q.options.forEach((opt, idx) => {
+                html += `<button class="btn-option" onclick="selectChoice(${idx}, this)">${opt.text}</button>`;
+            });
+        } 
+        else if (q.type === 'stars') {
+            html += `<div class="star-container">`;
+            for(let i=1; i<=5; i++) {
+                html += `<div class="star-btn" onclick="selectStar(${i}, '${q.key}')">★</div>`;
+            }
+            html += `</div><div class="star-desc" id="star-msg">请打分</div>`;
+        }
+        else if (q.type === 'sort') {
+            tempSortOrder = []; // reset
+            html += `<div class="sort-area">`;
+            q.items.forEach(item => {
+                html += `
+                    <div class="sort-item" id="sort-${item.id}" onclick="pickSort('${item.id}')">
+                        <span>${item.text}</span>
+                        <span class="rank-badge"></span>
+                    </div>
+                `;
+            });
+            html += `</div><div class="sort-reset" onclick="resetSort()">重置排序</div>`;
+        }
+        else if (q.type === 'yn') {
+            html += `
+                <div class="yn-container">
+                    <button class="yn-btn yes" onclick="selectYN(true, this)">YES</button>
+                    <button class="yn-btn no" onclick="selectYN(false, this)">NO</button>
+                </div>
+            `;
+        }
 
-  // show result
-  showResult(out, mbtiCombo, skill);
-}
+        html += `</div>`; // close card
+        container.innerHTML = html;
+    }
 
-function showResult(outcome, mbtiCombo, skillScores){ resultSec.style.display='block'; quizSec.style.display='none'; introSec.style.display='none'; sampleSec.style.display='none';
-  document.getElementById('resultName').innerText = outcome.name;
-  document.getElementById('resultOneLine').innerText = outcome.one;
-  document.getElementById('resultDesc').innerHTML = `<p class="small">你的工设MBTI 倾向（简化）：<strong>${escapeHtml(mbtiCombo)}</strong></p><p class="small">技能分布：审美 ${skillScores.a} / 工程 ${skillScores.b} / 系统 ${skillScores.c} / 手作 ${skillScores.d}</p>`;
-  document.getElementById('resultDirs').innerText = outcome.dirs.join(' · ');
-  document.getElementById('resultMetaList').innerHTML = outcome.meta.join('<br>');
-  resultIdForShare = outcome.id;
-}
+    // --- 交互函数 ---
 
-// helper
-function escapeHtml(s){ return s.replace(/[&<>"']/g, function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[m]}); }
+    function selectChoice(optIdx, btn) {
+        // Visual
+        document.querySelectorAll('.btn-option').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        
+        // Logic (Store temporarily, apply on Next)
+        const q = questions[currentIdx];
+        // Note: For simplicity in this logical flow, we just mark readiness. 
+        // In a complex app we'd store the selection index.
+        btn.dataset.selectedScore = JSON.stringify(q.options[optIdx].scores);
+        
+        document.getElementById('next-btn').disabled = false;
+    }
 
-// share: check URL param
-(function(){ const params = new URLSearchParams(location.search); const r = params.get('result'); if(r){ // show result directly if matches
-    const found = outcomes.find(o=>o.id===r); if(found){ showResult(found); } }
-})();
+    function selectStar(val, key) {
+        const stars = document.querySelectorAll('.star-btn');
+        stars.forEach((s, i) => {
+            if(i < val) s.classList.add('active');
+            else s.classList.remove('active');
+        });
 
+        // Msg
+        const msgs = ["求放过", "不太行", "凑合吧", "挺自信", "我是大神"];
+        document.getElementById('star-msg').innerText = msgs[val-1];
+
+        // Store
+        userScores[key] = val; // direct update
+        document.getElementById('next-btn').disabled = false;
+    }
+
+    function pickSort(id) {
+        if(tempSortOrder.includes(id)) return;
+        tempSortOrder.push(id);
+        
+        // Update UI
+        const el = document.getElementById('sort-'+id);
+        el.classList.add('picked');
+        el.querySelector('.rank-badge').innerText = "#" + tempSortOrder.length;
+
+        // Enable button if all picked
+        if(tempSortOrder.length === 4) {
+            document.getElementById('next-btn').disabled = false;
+        }
+    }
+
+    function resetSort() {
+        tempSortOrder = [];
+        document.querySelectorAll('.sort-item').forEach(el => {
+            el.classList.remove('picked');
+            el.querySelector('.rank-badge').innerText = "";
+        });
+        document.getElementById('next-btn').disabled = true;
+    }
+
+    function selectYN(isYes, btn) {
+        document.querySelectorAll('.yn-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        
+        const q = questions[currentIdx];
+        if (isYes && q.scores) {
+            // Store temp
+             btn.dataset.addScores = JSON.stringify(q.scores);
+        } else {
+             btn.dataset.addScores = "{}";
+        }
+        document.getElementById('next-btn').disabled = false;
+    }
+
+    function nextQuestion() {
+        // Apply scores from Choice/YN if pending
+        const choiceBtn = document.querySelector('.btn-option.selected');
+        if (choiceBtn && choiceBtn.dataset.selectedScore) {
+            const s = JSON.parse(choiceBtn.dataset.selectedScore);
+            for(let k in s) if(userScores[k] !== undefined) userScores[k] += s[k];
+            else userScores[k] = s[k]; // init if not exist
+        }
+
+        const ynBtn = document.querySelector('.yn-btn.selected');
+        if (ynBtn && ynBtn.dataset.addScores) {
+            const s = JSON.parse(ynBtn.dataset.addScores);
+            for(let k in s) {
+                if(userScores[k] === undefined) userScores[k] = 0;
+                userScores[k] += s[k];
+            }
+        }
+
+        // Sorting scores logic (First choice gets most weight)
+        if (questions[currentIdx].type === 'sort') {
+            // Logic: 1st place gets +3 to that type
+            const map = { "A": "money", "B": "local", "C": "art", "D": "global" }; 
+            // Simplified mapping for demo
+            if (tempSortOrder.length > 0) {
+                const firstPick = tempSortOrder[0];
+                if (firstPick === 'C') { userScores.art += 3; userScores.global +=1; }
+                if (firstPick === 'D') { userScores.global += 3; }
+                if (firstPick === 'B') { userScores.local += 3; }
+                if (firstPick === 'A') { userScores.local += 2; }
+            }
+        }
+
+        currentIdx++;
+        if (currentIdx < questions.length) {
+            renderQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    // --- 结果计算 ---
+
+    function showResult() {
+        document.getElementById('quiz-ui').style.display = 'none';
+        const resBox = document.getElementById('result-ui');
+        resBox.style.display = 'block';
+
+        // 1. Determine Archetype
+        let archetype = "";
+        let desc = "";
+        
+        // Analyze Scores
+        let hardSkills = (userScores.modeling || 0) + (userScores.rendering || 0) + (userScores.prototype || 0);
+        let artSense = (userScores.art || 0) + (userScores.sketch || 0);
+        let globalBias = (userScores.global || 0);
+        let localBias = (userScores.local || 0);
+        let uxBias = (userScores.ux || 0);
+
+        // Core logic
+        if (uxBias >= 2 && userScores.logic >= 2) {
+            archetype = "交互体验设计师 (UX/UI)";
+            desc = "你对实体产品的执念不深，反倒对逻辑、流程和界面感兴趣。别在工业设计死磕了，转行去做互联网交互，工资高，需求大。";
+        } else if (hardSkills > 12) {
+            archetype = "六边形战士 / 落地大神";
+            desc = "你的手头功夫极其扎实，建模渲染样样精通。你是所有工作室争抢的“大腿”。你在国内大厂或设计公司会非常抢手，因为你能把东西做出来。";
+        } else if (artSense > hardSkills && globalBias > localBias) {
+            archetype = "观念艺术家 / Concept Artist";
+            desc = "你脑洞很大，审美很好，但是不想做枯燥的结构。你天生适合出国（RCA, DAE, CSM），去探索设计的边界，而不是在国内画图纸。";
+        } else {
+            archetype = "全能产品经理型";
+            desc = "你可能手绘不是最顶的，建模不是最快的，但你逻辑清晰，懂取舍。你很适合做产品经理（PM）或者去企业内部做设计管理。";
+        }
+
+        // 2. Study Abroad Suggestion
+        let abroadAdvice = "";
+        if (globalBias > localBias + 2) {
+            abroadAdvice = "<span style='color:#007AFF'>✈️ 强烈建议出国。</span> 国内的落地环境会让你窒息。去英国（RCA/CSM）做思辨，或者去美国（ArtCenter）练极致造型。";
+        } else if (localBias > globalBias) {
+            abroadAdvice = "<span style='color:#34C759'>🏠 建议国内发展。</span> 你很务实，关注解决问题。中国的产业链优势最适合你发挥。去深圳、去车企，那里是你的战场。";
+        } else {
+            abroadAdvice = "🤔 两者皆可。你可以先工作两年，攒点钱和迷茫，再决定要不要出去镀金。";
+        }
+
+        // Render HTML
+        resBox.innerHTML = `
+            <div class="result-header">
+                <div style="font-size:14px;color:#999;margin-bottom:10px;">你的生存模式鉴定为</div>
+                <div class="result-title">${archetype}</div>
+                <p style="color:#666;">${desc}</p>
+            </div>
+
+            <div class="advice-card">
+                <span class="advice-title">🌍 留学 vs 就业诊断</span>
+                ${abroadAdvice}
+            </div>
+
+            <div class="advice-card">
+                <span class="advice-title">📊 技能雷达</span>
+                手头功夫 (Hard Skills): ${hardSkills}/15<br>
+                艺术直觉 (Art Sense): ${artSense}/10<br>
+                国际化倾向: ${globalBias > localBias ? "偏向海外" : "偏向本土"}
+            </div>
+
+            <div class="advice-card">
+                <span class="advice-title">💡 老学长的建议</span>
+                ${hardSkills < 8 ? "不管你去哪，先去把 Rhino/Blender 练好，这是吃饭的碗。" : "你的技术已经够用了，多去看看商业和心理学。"}
+            </div>
+
+            <button class="next-btn" style="width:100%; margin-top:20px;" onclick="location.reload()">再测一次</button>
+        `;
+    }
 </script>
+
 </body>
 </html>
